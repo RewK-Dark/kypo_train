@@ -12,7 +12,18 @@
      - hydra
      - vim
     update_cache: yes
-
+    
+- name: Ensure PasswordAuthentication is set to yes
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^#?PasswordAuthentication'
+    line: 'PasswordAuthentication yes'
+    state: present
+- name: Restart SSH service
+  service:
+    name: sshd
+    state: restarted
+    
 - name: Add passwords file to the home directory
   copy:
     src: passlist.txt
@@ -62,14 +73,7 @@
   file:
     path: /usr/local/bin/rootscript.sh
     mode: '04757'
-
-- name: Ensure PasswordAuthentication is set to yes
-  lineinfile:
-    path: /etc/ssh/sshd_config
-    regexp: '^#?PasswordAuthentication'
-    line: 'PasswordAuthentication yes'
-    state: present
-
+    
 #sudoers_vuln
 - name: Backup sudoers file
   copy:
