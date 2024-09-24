@@ -80,7 +80,7 @@
 - name: Update sudoers file
   lineinfile:
     path: /etc/sudoers
-    line: 'hinhlx ALL=(ALL) NOPASSWD: /usr/bin/vim'
+    line: 'user ALL=(ALL) NOPASSWD: /usr/bin/vim'
     validate: '/usr/sbin/visudo -cf %s'
 
 #cron_vuln
