@@ -44,6 +44,12 @@
     owner: root
     mode: 0700
 
+- name: Add flag file to the home directory
+  copy:
+    src: 123secret.txt
+    dest: /etc/123secret.txt
+    owner: root
+    mode: 0700
 # Create user hinhlx
 - name: Create user hinhlx
   user:
@@ -75,17 +81,26 @@
     mode: '04757'
     
 #sudoers_vuln
-- name: Backup sudoers file
+- name: Create a log file with a hidden flag (only accessible by root)
   copy:
-    src: /etc/sudoers
-    dest: /etc/sudoers.bak
-    remote_src: yes
+    dest: /var/log/flag_sudoers.log
+    content: "FLAG{sudoers_exploit_success}\n"
+    owner: root
+    group: root
+    mode: '0400'
 
-- name: Update sudoers file
+- name: Allow specific user to read the log file with root privileges via sudo
   lineinfile:
     path: /etc/sudoers
-    line: 'user ALL=(ALL) NOPASSWD: /usr/bin/vim'
+    line: 'user ALL=(ALL) NOPASSWD: /bin/cat /var/log/flag_sudoers.log'
     validate: '/usr/sbin/visudo -cf %s'
+
+- name: Ensure the log file has the correct permissions (only root can read)
+  file:
+    path: /var/log/flag_sudoers.log
+    owner: root
+    group: root
+    mode: '0400'
 
 #cron_vuln
 
@@ -111,6 +126,7 @@
     content: |
       #!/bin/bash
       echo "Running insecure script"
+      #flag in /etc/123secret.txt
       /bin/bash
     owner: root
     group: root
