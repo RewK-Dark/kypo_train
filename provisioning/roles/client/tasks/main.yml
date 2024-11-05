@@ -12,7 +12,11 @@
      - hydra
      - vim
     update_cache: yes
-    
+- name: ubuntu-desktop
+  apt:
+    name: ubuntu-desktop
+    state: present
+    install_recommends: yes    
 - name: Ensure PasswordAuthentication is set to yes
   lineinfile:
     path: /etc/ssh/sshd_config
